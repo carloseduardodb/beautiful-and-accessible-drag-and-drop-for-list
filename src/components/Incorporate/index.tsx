@@ -1,6 +1,11 @@
 import Card from "../Card/index";
 import List from "../List/index";
-import { Draggable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot,
+} from "react-beautiful-dnd";
 import { useState } from "react";
 
 const Incorporate = () => {
@@ -85,38 +90,45 @@ const Incorporate = () => {
 
   return (
     <>
-      <div className="flex p-12">
-        <List title="Disponíveis" onDragEnd={onDragEnd} name="available">
-          {items.available.map((item, index) => (
-            <Draggable draggableId={item.uuid} index={index} key={item.id}>
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                >
-                  <Card data={item} />
-                </div>
-              )}
-            </Draggable>
-          ))}
-        </List>
-        <List title="Atribuídos" onDragEnd={onDragEnd} name="assigned">
-          {items.assigned.map((item, index) => (
-            <Draggable draggableId={item.uuid} index={index} key={item.id}>
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                >
-                  <Card data={item} />
-                </div>
-              )}
-            </Draggable>
-          ))}
-        </List>
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex p-12">
+          <List title="Disponíveis" onDragEnd={onDragEnd} name="available">
+            {items.available.map((item, index) => (
+              <Draggable key={item.id} draggableId={item.id + ""} index={index}>
+                {(
+                  provided: DraggableProvided | any,
+                  snapshot: DraggableStateSnapshot
+                ) => (
+                  <div>
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <Card data={item} />
+                    </div>
+                  </div>
+                )}
+              </Draggable>
+            ))}
+          </List>
+          <List title="Atribuídos" onDragEnd={onDragEnd} name="assigned">
+            {items.assigned.map((item, index) => (
+              <Draggable draggableId={item.uuid} index={index} key={item.id}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <Card data={item} />
+                  </div>
+                )}
+              </Draggable>
+            ))}
+          </List>
+        </div>
+      </DragDropContext>
     </>
   );
 };
